@@ -1,0 +1,44 @@
++ echo '== curl info =='
+== curl info ==
++ wc -c arena_scratch/fetched/raw.bin
+500537 arena_scratch/fetched/raw.bin
++ file arena_scratch/fetched/raw.bin
+arena_scratch/fetched/raw.bin: JPEG image data, JFIF standard 1.02, resolution (DPI), density 72x72, segment length 16, Exif Standard: [TIFF image data, big-endian, direntries=7, orientation=upper-left, xresolution=98, yresolution=106, resolutionunit=2, software=Adobe Photoshop 7.0, datetime=2006:01:08 21:26:27], baseline, precision 8, 1151x833, components 3
++ sha256sum arena_scratch/fetched/raw.bin
+6aed1ba0789b0e2003b8e38a40354f78ba78c136ec7dcf9257b76037321148ef  arena_scratch/fetched/raw.bin
++ echo '== hexdump head =='
+== hexdump head ==
++ xxd arena_scratch/fetched/raw.bin
++ head -8
+00000000: ffd8 ffe0 0010 4a46 4946 0001 0201 0048  ......JFIF.....H
+00000010: 0048 0000 ffe1 108d 4578 6966 0000 4d4d  .H......Exif..MM
+00000020: 002a 0000 0008 0007 0112 0003 0000 0001  .*..............
+00000030: 0001 0000 011a 0005 0000 0001 0000 0062  ...............b
+00000040: 011b 0005 0000 0001 0000 006a 0128 0003  ...........j.(..
+00000050: 0000 0001 0002 0000 0131 0002 0000 0014  .........1......
+00000060: 0000 0072 0132 0002 0000 0014 0000 0086  ...r.2..........
+00000070: 8769 0004 0000 0001 0000 009c 0000 00c8  .i..............
++ echo '== headers =='
+== headers ==
++ cat arena_scratch/fetched/headers.txt
+HTTP/2 200 
+date: Fri, 09 Oct 2026 02:43:42 GMT
+content-type: image/jpeg
+content-length: 500537
+server: cloudflare
+last-modified: Sat, 16 May 2009 05:25:37 GMT
+etag: "4a0e4e51-7a339"
+access-control-allow-origin: *
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-headers: Origin,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range
+access-control-expose-headers: Content-Length,Content-Range
+accept-ranges: bytes
+age: 3570
+cache-control: max-age=14400
+cf-cache-status: HIT
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Nk02qI5%2B4jVp69MgON%2FZYKnI3%2FHvQJRkSfpF%2BlLfburp1Z0c46fH9j%2F34ZGbCNykxEXJCY9VXI%2FYqftDXNQ1r7d58IIFWubxcSwx18SvnWlbbzKqgU66WXyQratvWKsjXXcc"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a47a0a10ce41e811-ORD
+alt-svc: h3=":443"; ma=86400
+
+667384 arena_scratch/fetched/raw.b64
