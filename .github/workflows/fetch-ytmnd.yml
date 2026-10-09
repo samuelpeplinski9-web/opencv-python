@@ -1,0 +1,49 @@
+name: fetch-ytmnd-image
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    if: github.ref_name == 'arena/d621b54f-opencv-python'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch target and commit bytes
+        run: |
+          set -x
+          mkdir -p arena_scratch/fetched
+          URL="https://content.ytmnd.com/content/c/f/e/cfeb2324925273e5e41632d6f3b06bd4.jpg"
+          # Attempt 1: direct fetch with several UA variants
+          for UA in "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "curl/8.0" "Wget/1.21"; do
+            curl -sSL --max-time 45 -A "$UA" -D arena_scratch/fetched/headers.txt -o arena_scratch/fetched/raw.bin "$URL" && break
+          done
+          # Attempt 2: plain http
+          if [ ! -s arena_scratch/fetched/raw.bin ]; then
+            curl -sSL --max-time 45 -D arena_scratch/fetched/headers.txt -o arena_scratch/fetched/raw.bin "http://content.ytmnd.com/content/c/f/e/cfeb2324925273e5e41632d6f3b06bd4.jpg" || true
+          fi
+          {
+            echo "== curl info =="
+            wc -c arena_scratch/fetched/raw.bin 2>/dev/null || echo "no raw.bin"
+            file arena_scratch/fetched/raw.bin 2>/dev/null || true
+            sha256sum arena_scratch/fetched/raw.bin 2>/dev/null || true
+            echo "== hexdump head =="
+            xxd arena_scratch/fetched/raw.bin 2>/dev/null | head -8
+            echo "== headers =="
+            cat arena_scratch/fetched/headers.txt 2>/dev/null
+          } > arena_scratch/fetched/info.txt 2>&1
+          # Transport as base64 to be safe
+          base64 -w0 arena_scratch/fetched/raw.bin > arena_scratch/fetched/raw.b64 2>/dev/null || echo -n "" > arena_scratch/fetched/raw.b64
+          wc -c arena_scratch/fetched/raw.b64 >> arena_scratch/fetched/info.txt 2>&1 || true
+          cat arena_scratch/fetched/info.txt
+          git config user.name "ytmnd-fetch-bot"
+          git config user.email "ytmnd-fetch-bot@users.noreply.github.com"
+          git add -f arena_scratch/fetched
+          git commit -m "fetch: ytmnd content bytes [skip ci]" || echo "nothing to commit"
+          git push origin HEAD:${{ github.ref_name }} || echo "push failed"
